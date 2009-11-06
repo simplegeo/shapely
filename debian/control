@@ -1,0 +1,24 @@
+Source: python-shapely
+Section: python
+Priority: optional
+Maintainer: Pietro Battiston <toobaz@email.it>
+Build-Depends: debhelper (>= 7)
+Build-Depends-Indep: python-setuptools (>= 0.6), python-support (>= 0.6)
+Standards-Version: 3.8.3
+XS-Python-Version: >= 2.4
+Homepage: http://trac.gispython.org/lab/wiki/Shapely
+
+Package: python-shapely
+Architecture: all
+Depends: ${python:Depends}, ${misc:Depends}, python (>=2.5) | python-ctypes, libgeos-c1 (>= 2.3.3)
+Suggests: python-numpy
+Enhances: python-numpy
+XB-Python-Version: ${python:Versions}
+Description: manipulation and analysis of 2D geospatial geometries
+ Shapely is a package for manipulation and analysis of 2D geospatial geometries.
+ Its capabilities include:
+  * obtaining the unions, intersections, or differences of 2D shapes
+  * determining whether 2D shapes intersect, touch, or contain one another 
+ and more.
+ .
+ Shapes can be points, polygonal chains or polygones.

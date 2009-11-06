@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+PACKAGE_NAME=python-shapely
+
+build-arch:
+build-indep:
+build: build-arch build-indep
+
+clean: 
+	dh_testdir
+	dh_testroot
+	find . -name '*\.pyc' -delete
+	rm -rf $(CURDIR)/build
+	dh_clean $(CURDIR)/Shapely.egg-info/SOURCES.txt
+
+install:
+	dh_testdir
+	dh_testroot
+	dh_installdirs
+
+	python setup.py install --no-compile --root $(CURDIR)/debian/$(PACKAGE_NAME)
+
+binary-arch:
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs CHANGES.txt
+	dh_installdocs
+	dh_installexamples
+	dh_pysupport
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+
+.PHONY: build clean binary-indep binary-arch binary install build-arch build-indep build
