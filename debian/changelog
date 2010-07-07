@@ -1,3 +1,9 @@
+python-shapely (1.1.1-1sg0) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Ian Eure <ian@simplegeo.com>  Tue, 06 Jul 2010 20:34:24 -0700
+
 python-shapely (1.0.14-1) unstable; urgency=low
 
   * New upstream release

@@ -1,10 +1,11 @@
 Source: python-shapely
 Section: python
 Priority: optional
-Maintainer: Pietro Battiston <toobaz@email.it>
+Maintainer: SimpleGeo Nerds <nerds@simplegeo.com>
+Uploaders: Pietro Battiston <toobaz@email.it>, Ian Eure <ian@simplegeo.com>
 Build-Depends: debhelper (>= 7)
 Build-Depends-Indep: python-setuptools (>= 0.6), python-support (>= 0.6)
-Standards-Version: 3.8.3
+Standards-Version: 3.8.4
 XS-Python-Version: >= 2.4
 Homepage: http://trac.gispython.org/lab/wiki/Shapely
 
