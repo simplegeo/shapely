@@ -1,3 +1,9 @@
+python-shapely (1.2.1-0sg2) lucid; urgency=low
+
+  * UNRELEASED
+
+ -- SimpleGeo Nerds <nerds@simplegeo.com>  Wed, 07 Jul 2010 03:55:13 +0000
+
 python-shapely (1.2.1-0sg0) unstable; urgency=low
 
   * New upstream release.
