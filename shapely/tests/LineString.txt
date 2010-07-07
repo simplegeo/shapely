@@ -23,6 +23,14 @@ From coordinate tuples
     >>> line.wkt
     'LINESTRING (1.0000000000000000 2.0000000000000000, 3.0000000000000000 4.0000000000000000)'
 
+From lines
+
+    >>> copy = LineString(line)
+    >>> len(copy.coords)
+    2
+    >>> print copy.wkt
+    LINESTRING (1.0000000000000000 2.0000000000000000, 3.0000000000000000 4.0000000000000000)
+
 
 Numpy Support
 -------------
@@ -113,14 +121,10 @@ Test Non-operability of Null geometry
 
     >>> l_null = LineString()
     >>> l_null.wkt # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    ValueError: Null geometry supports no operations
+    'GEOMETRYCOLLECTION EMPTY'
 
     >>> l_null.length # doctest: +ELLIPSIS
-    Traceback (most recent call last):
-    ...
-    ValueError: Null geometry supports no operations
+    0.0
 
 Check that we can set coordinates of a null geometry
 

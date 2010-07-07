@@ -1,15 +1,74 @@
 All tickets are children of http://trac.gispython.org/lab/ticket.
 
-1.0.14 (2009-10-05)
+1.2.1 (2010-06-23)
+------------------
+- Fixed bounds of singular polygons.
+- Added shapely.validation.explain_validity function (#226).
+
+1.2 (2010-05-27)
+----------------
+- Final release.
+
+1.2rc2 (2010-05-26)
 -------------------
+- Add examples and tests to MANIFEST.in.
+- Release candidate 2.
+
+1.2rc1 (2010-05-25)
+-------------------
+- Release candidate.
+
+1.2b7 (2010-04-22)
+------------------
+- Memory leak associated with new empty geometry state fixed.
+
+1.2b6 (2010-04-13)
+------------------
+- Broken GeometryCollection fixed.
+
+1.2b5 (2010-04-09)
+------------------
+- Objects can be constructed from others of the same type, thereby making
+  copies. Collections can be constructed from sequences of objects, also making
+  copies.
+- Collections are now iterators over their component objects.
+- New code for manual figures, using the descartes package.
+
+1.2b4 (2010-03-19)
+------------------
+- Adds support for the "sunos5" platform.
+
+1.2b3 (2010-02-28)
+------------------
+- Only provide simplification implementations for GEOS C API >= 1.5.
+
+1.2b2 (2010-02-19)
+------------------
+- Fix cascaded_union bug introduced in 1.2b1 (#212).
+
+1.2b1 (2010-02-18)
+------------------
+- Update the README. Remove cruft from setup.py. Add some version 1.2 metadata
+  regarding required Python version (>=2.5,<3) and external dependency
+  (libgeos_c >= 3.1).
+
+1.2a6 (2010-02-09)
+------------------
+- Add accessor for separate arrays of X and Y values (#210).
+
+TODO: fill gap here
+
+1.2a1 (2010-01-20)
+------------------
 - Proper prototyping of WKB writer, and avoidance of errors on 64-bit systems
   (#191).
-
-1.0.13 (2009-09-29)
--------------------
 - Prototype libgeos_c functions in a way that lets py2exe apps import shapely
   (#189).
-  
+
+=========================
+1.2 Branched (2009-09-19)
+=========================
+
 1.0.12 (2009-04-09)
 -------------------
 - Fix for references held by topology and predicate descriptors.
@@ -65,3 +124,23 @@ All tickets are children of http://trac.gispython.org/lab/ticket.
 1.0.2 (2008-02-26)
 ------------------
 - Fix loss of dimensionality in polygon rings (#155).
+
+1.0.1 (2008-02-08)
+------------------
+- Allow chaining expressions involving coordinate sequences and geometry parts
+  (#151).
+- Protect against abnormal use of coordinate accessors (#152).
+- Coordinate sequences now implement the numpy array protocol (#153).
+
+1.0 (2008-01-18)
+----------------
+- Final release.
+
+1.0 RC2 (2008-01-16)
+--------------------
+- Added temporary solution for #149.
+
+1.0 RC1 (2008-01-14)
+--------------------
+- First release candidate
+

@@ -1,71 +1,54 @@
-"""
-Multi-part collection of polygons.
+"""Collections of polygons and related utilities
 """
 
-from ctypes import byref, c_double, c_int, c_void_p, cast, POINTER, pointer
+from ctypes import c_void_p, cast
 
 from shapely.geos import lgeos
-from shapely.geometry.base import BaseGeometry, GeometrySequence, exceptNull
+from shapely.geometry.base import BaseMultipartGeometry
 from shapely.geometry.polygon import Polygon, geos_polygon_from_py
 from shapely.geometry.proxy import CachingGeometryProxy
 
-
-def geos_multipolygon_from_py(ob):
-    """ob must provide Python geo interface coordinates."""
-    L = len(ob)
-    N = len(ob[0][0][0])
-    assert L >= 1
-    assert N == 2 or N == 3
-
-    subs = (c_void_p * L)()
-    for l in xrange(L):
-        geom, ndims = geos_polygon_from_py(ob[l][0], ob[l][1:])
-        subs[l] = cast(geom, c_void_p)
-            
-    return (lgeos.GEOSGeom_createCollection(6, subs, L), N)
-
-def geos_multipolygon_from_polygons(ob):
-    """ob must be either a sequence or array of sequences or arrays."""
-    L = len(ob)
-    N = len(ob[0][0][0])
-    assert L >= 1
-    assert N == 2 or N == 3
-
-    subs = (c_void_p * L)()
-    for l in xrange(L):
-        geom, ndims = geos_polygon_from_py(ob[l][0], ob[l][1])
-        subs[l] = cast(geom, c_void_p)
-            
-    return (lgeos.GEOSGeom_createCollection(6, subs, L), N)
+__all__ = ['MultiPolygon', 'asMultiPolygon']
 
 
+class MultiPolygon(BaseMultipartGeometry):
 
-class MultiPolygon(BaseGeometry):
-
-    """a multiple polygon geometry.
+    """A collection of one or more polygons
+    
+    If component polygons overlap the collection is `invalid` and some
+    operations on it may fail.
+    
+    Attributes
+    ----------
+    geoms : sequence
+        A sequence of `Polygon` instances
     """
 
     def __init__(self, polygons=None, context_type='polygons'):
-        """Initialize.
-
+        """
         Parameters
         ----------
-        
         polygons : sequence
             A sequence of (shell, holes) tuples where shell is the sequence
             representation of a linear ring (see linearring.py) and holes is
-            a sequence of such linear rings.
+            a sequence of such linear rings
 
         Example
         -------
-        >>> geom = MultiPolygon( [
-        ...     (
-        ...     ((0.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, 0.0)), 
-        ...     [((0.1,0.1), (0.1,0.2), (0.2,0.2), (0.2,0.1))]
-        ...     )
-        ... ] )
+        Construct a collection from a sequence of coordinate tuples
+
+          >>> ob = MultiPolygon( [
+          ...     (
+          ...     ((0.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, 0.0)), 
+          ...     [((0.1,0.1), (0.1,0.2), (0.2,0.2), (0.2,0.1))]
+          ...     )
+          ... ] )
+          >>> len(ob.geoms)
+          1
+          >>> type(ob.geoms[0]) == Polygon
+          True
         """
-        BaseGeometry.__init__(self)
+        super(MultiPolygon, self).__init__()
 
         if polygons is None:
             # allow creation of null collections, to support unpickling
@@ -74,6 +57,9 @@ class MultiPolygon(BaseGeometry):
             self._geom, self._ndim = geos_multipolygon_from_polygons(polygons)
         elif context_type == 'geojson':
             self._geom, self._ndim = geos_multipolygon_from_py(polygons)
+
+    def shape_factory(self, *args):
+        return Polygon(*args)
 
     @property
     def __geo_interface__(self):
@@ -89,41 +75,8 @@ class MultiPolygon(BaseGeometry):
             'coordinates': allcoords
             }
 
-    @property
-    def ctypes(self):
-        raise NotImplementedError, \
-        "Multi-part geometries have no ctypes representations"
-
-    @property
-    def __array_interface__(self):
-        """Provide the Numpy array protocol."""
-        raise NotImplementedError, \
-        "Multi-part geometries do not themselves provide the array interface"
-
-    def _get_coords(self):
-        raise NotImplementedError, \
-        "Component rings have coordinate sequences, but the polygon does not"
-
-    def _set_coords(self, ob):
-        raise NotImplementedError, \
-        "Component rings have coordinate sequences, but the polygon does not"
-
-    @property
-    def coords(self):
-        raise NotImplementedError, \
-        "Multi-part geometries do not provide a coordinate sequence"
-
-    @property
-    @exceptNull
-    def geoms(self):
-        return GeometrySequence(self, Polygon)
-
 
 class MultiPolygonAdapter(CachingGeometryProxy, MultiPolygon):
-
-    """Adapts sequences of sequences or numpy arrays to the multipolygon
-    interface.
-    """
     
     context = None
     _owned = False
@@ -149,15 +102,53 @@ class MultiPolygonAdapter(CachingGeometryProxy, MultiPolygon):
 
 
 def asMultiPolygon(context):
-    """Factory for MultiLineStringAdapter instances."""
+    """Adapts a sequence of objects to the MultiPolygon interface"""
     return MultiPolygonAdapter(context)
 
+
+def geos_multipolygon_from_py(ob):
+    """ob must provide Python geo interface coordinates."""
+    L = len(ob)
+    N = len(ob[0][0][0])
+    assert L >= 1
+    assert N == 2 or N == 3
+
+    subs = (c_void_p * L)()
+    for l in xrange(L):
+        geom, ndims = geos_polygon_from_py(ob[l][0], ob[l][1:])
+        subs[l] = cast(geom, c_void_p)
+            
+    return (lgeos.GEOSGeom_createCollection(6, subs, L), N)
+
+def geos_multipolygon_from_polygons(ob):
+    """ob must be either a sequence or array of sequences or arrays."""
+    obs = getattr(ob, 'geoms', None) or ob
+    L = len(obs)
+    exemplar = obs[0]
+    try:
+        N = len(exemplar[0][0])
+    except TypeError:
+        N = exemplar._ndim
+    assert L >= 1
+    assert N == 2 or N == 3
+
+    subs = (c_void_p * L)()
+    for l in xrange(L):
+        shell = getattr(obs[l], 'exterior', None)
+        if shell is None:
+            shell = obs[l][0]
+        holes = getattr(obs[l], 'interiors', None)
+        if holes is None:
+            holes =  obs[l][1]
+        geom, ndims = geos_polygon_from_py(shell, holes)
+        subs[l] = cast(geom, c_void_p)
+            
+    return (lgeos.GEOSGeom_createCollection(6, subs, L), N)
 
 # Test runner
 def _test():
     import doctest
     doctest.testmod()
-
 
 if __name__ == "__main__":
     _test()
