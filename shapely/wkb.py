@@ -1,23 +1,25 @@
-"""
-Load/dump geometries using the well-known binary (WKB) format.
+"""Load/dump geometries using the well-known binary (WKB) format
 """
 
-from ctypes import byref, c_int, c_size_t, c_char_p, string_at
+from ctypes import byref, c_size_t, c_char_p, string_at
 from ctypes import c_void_p, c_size_t
 
-from shapely.geos import lgeos, free, ReadingError
-from shapely.geometry.base import geom_factory
+from shapely.geos import lgeos, ReadingError
 
 
 # Pickle-like convenience functions
 
-def loads(data):
-    """Load a geometry from a WKB string."""
+def deserialize(data):
     geom = lgeos.GEOSGeomFromWKB_buf(c_char_p(data), c_size_t(len(data)));
     if not geom:
-        raise ReadingError, \
-        "Could not create geometry because of errors while reading input."
-    return geom_factory(geom)
+        raise ReadingError(
+            "Could not create geometry because of errors while reading input.")
+    return geom
+
+def loads(data):
+    """Load a geometry from a WKB string."""
+    from shapely.geometry.base import geom_factory
+    return geom_factory(deserialize(data))
 
 def load(fp):
     """Load a geometry from an open file."""
@@ -26,15 +28,10 @@ def load(fp):
 
 def dumps(ob):
     """Dump a WKB representation of a geometry to a byte string."""
-    func = lgeos.GEOSGeomToWKB_buf
+    if ob is None or ob._geom is None:
+        raise ValueError("Null geometry supports no operations")
     size = c_size_t()
-    def errcheck(result, func, argtuple):
-        if not result: return None
-        retval = string_at(result, size.value)[:]
-        free(result)
-        return retval
-    func.errcheck = errcheck
-    return func(c_void_p(ob._geom), byref(size))
+    return lgeos.GEOSGeomToWKB_buf(c_void_p(ob._geom), byref(size))
 
 def dump(ob, fp):
     """Dump a geometry to an open file."""

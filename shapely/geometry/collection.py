@@ -1,18 +1,22 @@
-"""
-Geometry collections.
+"""Multi-part collections of geometries
 """
 
-from shapely.geometry.base import BaseMultiPartGeometry
+from shapely.geometry.base import BaseMultipartGeometry
 from shapely.geometry.base import HeterogeneousGeometrySequence, exceptNull
 
 
-class GeometryCollection(BaseMultiPartGeometry):
+class GeometryCollection(BaseMultipartGeometry):
 
-    """A geometry collection.
+    """A heterogenous collection of geometries
+
+    Attributes
+    ----------
+    geoms : sequence
+        A sequence of Shapely geometry instances
     """
 
     def __init__(self):
-        BaseMultiPartGeometry.__init__(self)
+        BaseMultipartGeometry.__init__(self)
 
     @property
     def __geo_interface__(self):
