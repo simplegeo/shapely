@@ -29,7 +29,6 @@ setup_args = dict(
     url                 = 'http://trac.gispython.org/lab/wiki/Shapely',
     long_description    = readme_text,
     packages            = ['shapely', 'shapely.geometry'],
-    scripts             = ['examples/dissolve.py', 'examples/intersect.py'],
     test_suite          = 'shapely.tests.test_suite',
     classifiers         = [
         'Development Status :: 5 - Production/Stable',
