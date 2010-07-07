@@ -1,0 +1,72 @@
+Test GEOS operations
+====================
+
+  >>> from shapely.geometry import Point
+  >>> point = Point(0.0, 0.0)
+
+General geometry
+----------------
+
+  >>> point.area
+  0.0
+
+  >>> point.length
+  0.0
+
+  >>> point.distance(Point(-1.0, -1.0))
+  1.4142135623730951
+
+Topology operations
+-------------------
+
+  Envelope
+
+  >>> point.envelope #doctest: +ELLIPSIS
+  <shapely.geometry.point.Point object at ...>
+
+  Intersection
+
+  >>> point.intersection(Point(-1,-1)) #doctest: +ELLIPSIS
+  <shapely.geometry.collection.GeometryCollection object at ...>
+  
+  Buffer
+
+  >>> point.buffer(10.0) #doctest: +ELLIPSIS
+  <shapely.geometry.polygon.Polygon object at ...>
+  
+  >>> point.buffer(10.0, 32) #doctest: +ELLIPSIS
+  <shapely.geometry.polygon.Polygon object at ...>
+
+  Convex Hull
+
+  >>> point.convex_hull #doctest: +ELLIPSIS
+  <shapely.geometry.point.Point object at ...>
+  
+  Differences
+
+  >>> point.difference(Point(-1, 1)) #doctest: +ELLIPSIS
+  <shapely.geometry.point.Point object at ...>
+  
+  >>> point.symmetric_difference(Point(-1, 1)) #doctest: +ELLIPSIS
+  <shapely.geometry.multipoint.MultiPoint object at ...>
+  
+  Boundary
+
+  >>> point.boundary #doctest: +ELLIPSIS
+  <shapely.geometry.collection.GeometryCollection object at ...>
+  
+  Union
+
+  >>> point.union(Point(-1, 1)) #doctest: +ELLIPSIS
+  <shapely.geometry.multipoint.MultiPoint object at ...>
+
+  Point on Surface (TODO?)
+
+  >>> point.centroid #doctest: +ELLIPSIS
+  <shapely.geometry.point.Point object at ...>
+
+  Relate
+
+  >>> point.relate(Point(-1, -1)) #doctest: +ELLIPSIS
+  'FF0FFF0F2'
+
